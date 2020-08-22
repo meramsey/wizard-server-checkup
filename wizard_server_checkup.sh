@@ -6,7 +6,7 @@
 # ./wizard_server_checkup.sh
 # sh wizard_server_checkup.sh
 ##
-# wget -N https://gitlab.com/mikeramsey/wizard-server-checkup/raw/master/wizard_server_checkup.sh ;sudo bash wizard_server_checkup.sh;> wizard_server_checkup.sh && printf 'y\n' |rm wizard_server_checkup.sh;
+# wget -N https://gitlab.com/mikeramsey/wizard-server-checkup/-/raw/master/wizard_server_checkup.sh ;sudo bash wizard_server_checkup.sh;> wizard_server_checkup.sh && printf 'y\n' |rm wizard_server_checkup.sh;
 #
 
 #Allow users to see full domlog paths
