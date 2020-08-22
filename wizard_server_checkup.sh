@@ -272,7 +272,7 @@ echo ""
 if [ $InitSystem == "systemd" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
-  systemctl status httpd
+  systemctl status httpd 2>/dev/null||systemctl status lsws
   echo ""
   echo "Service check for MySQL/MariaDB:"
   systemctl status mysql
@@ -281,7 +281,7 @@ if [ $InitSystem == "systemd" ]; then
   systemctl status pdns|| systemctl status named
   echo ""
   echo "Service check for Exim|Postfix:"
-  systemctl status exim && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||systemctl status postfix && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
+  systemctl status exim && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m" 2>/dev/null||systemctl status postfix && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
   echo "Service check for Dovecot:"
   systemctl status dovecot
@@ -289,7 +289,7 @@ if [ $InitSystem == "systemd" ]; then
 elif [ $InitSystem == "sysv-init" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
-  service httpd status
+  service httpd status 2>/dev/null||service lsws status
   echo ""
   echo "Service check for MySQL/MariaDB:"
   service mysql status
@@ -298,14 +298,14 @@ elif [ $InitSystem == "sysv-init" ]; then
   service pdns status|| service named status
   echo ""
   echo "Service check for Exim|Postfix:"
-  service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
+  service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m" 2>/dev/null||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
   echo "Service check for Dovecot:"
   service dovecot status
 elif [ $InitSystem == "Upstart" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
-  service httpd status
+  service httpd status 2>/dev/null||service lsws status
   echo ""
   echo "Service check for MySQL/MariaDB:"
   service mysql status
@@ -314,7 +314,7 @@ elif [ $InitSystem == "Upstart" ]; then
   service pdns status|| service named status
   echo ""
   echo "Service check for Exim|Postfix:"
-  service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
+  service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m" 2>/dev/null||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
   echo "Service check for Dovecot:"
   service dovecot status
