@@ -146,7 +146,7 @@ df -h
 echo ""
 echo "Inodes Check"
 df -i
-
+echo "============================================="
 echo "Current ulimit: $(ulimit -n)"; 
 echo ""; username="root" ; 
 echo "Checking ${username}'s currently opened files: ";  lsof| tr -s ' ' | cut -d ' ' -f3 | grep ${username} | wc -l ;
