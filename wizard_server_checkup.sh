@@ -146,6 +146,10 @@ df -h
 echo ""
 echo "Inodes Check"
 df -i
+
+echo "Current ulimit: $(ulimit -n)"; 
+echo ""; username="root" ; 
+echo "Checking ${username}'s currently opened files: ";  lsof| tr -s ' ' | cut -d ' ' -f3 | grep ${username} | wc -l ;
 echo "============================================="
 echo "Show currently logged in users"
 w
@@ -325,17 +329,17 @@ fi
 echo ""
 
 if [ "${ControlPanel}" == "cpanel" ]; then
+	echo "Check cPhulkd Status. Should be disabled and is sometimes enabled with CSF and causes issues."
+	whmapi1 cphulk_status; ps aux | grep -i cphulk
+
 	#Apache Log locations cPanel
 	##This directory contains the log data for the user's account, which exists on a webserver that runs EasyApache 3.
 	DomLogsEA3="/home/domlogs/"
 
 	##This directory contains the log data for the user's account, which exists on a webserver that runs EasyApache 4.
 	DomLogsEA4="/var/log/apache2/domlogs/"
-
-
 	DomlogsPathUniversal="/usr/local/apache/domlogs/"
 	DomlogsPathEA4="/var/log/apache2/domlogs/"
-
 	if [ -e "$DomlogsPathUniversal" ]; then
 	   echo "Folder $DomlogsPathUniversal exists"
 	   CurrentDomlogsPath=$DomlogsPathUniversal
