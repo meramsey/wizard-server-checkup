@@ -142,10 +142,10 @@ fi
 
 echo "============================================="
 echo "Filesystems Disk usage check"
-df -h
+df -h| grep -v tmpfs
 echo ""
 echo "Inodes Check"
-df -i
+df -i| grep -v tmpfs
 echo "============================================="
 echo "Current ulimit: $(ulimit -n)"; 
 echo ""; username="root" ; 
@@ -154,7 +154,7 @@ echo "============================================="
 echo "Show currently logged in users"
 w
 echo ""
-echo "Last login history"
+echo "Last ssh login history"
 lastlog -b 0 -t 10
 echo "============================================="
 echo ""
@@ -242,26 +242,33 @@ csf=/usr/sbin/csf
 apf=/usr/local/sbin/apf
 apf2=/etc/apf/apf.conf
 firewalld=firewall-cmd
+ufw=/usr/sbin/ufw
 
 echo "Finding active Firewall"
    if hash apf 2>/dev/null; then
-    firewall="a"
-	echo "APF detected"
+    	firewall="a"
+		echo "APF detected"
     elif [ -e "$apf 2>/dev/null" ]; then
-    firewall="a"
-	echo "APF detected at /usr/local/sbin/apf"
+    	firewall="a"
+		echo "APF detected at /usr/local/sbin/apf"
     elif [ -e "$apf2 2>/dev/null" ]; then
-    firewall="a"
-  echo "APF detected at /etc/apf/apf.conf"
+    	firewall="a"
+  		echo "APF detected at /etc/apf/apf.conf"
     elif hash csf 2>/dev/null; then
 	  firewall="c"
-	echo "CSF detected"
+		echo "CSF detected"
     elif [ -e "$csf 2>/dev/null" ]; then
-	firewall="c"
-	echo "CSF detected"
+		firewall="c"
+		echo "CSF detected"
+	elif hash ufw 2>/dev/null; then
+	  	firewall="u"
+		echo "UFW firewall detected"
+	elif [ -e "$ufw 2>/dev/null" ]; then
+		firewall="u"
+		echo "UFW firewall detected"
     elif hash firewalld 2>/dev/null; then
-	firewall="f"
-	echo "FirewallD detected"
+		firewall="f"
+		echo "FirewallD detected"
     else
 	echo "No supported firewall installed"
     fi
@@ -289,6 +296,9 @@ if [ $InitSystem == "systemd" ]; then
   echo ""
   echo "Service check for Dovecot:"
   systemctl status dovecot
+  echo ""
+  echo "Service check for Memcached:"
+  systemctl status memcached
 
 elif [ $InitSystem == "sysv-init" ]; then
   echo "Checking important Services....:"
@@ -306,6 +316,10 @@ elif [ $InitSystem == "sysv-init" ]; then
   echo ""
   echo "Service check for Dovecot:"
   service dovecot status
+  echo ""
+  echo "Service check for Memcached:"
+  service memcached status
+
 elif [ $InitSystem == "Upstart" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
@@ -322,6 +336,9 @@ elif [ $InitSystem == "Upstart" ]; then
   echo ""
   echo "Service check for Dovecot:"
   service dovecot status
+  echo ""
+  echo "Service check for Memcached:"
+  service memcached status
 else
   echo "Init System not found"
 fi
@@ -386,6 +403,26 @@ echo "Check HTTP error logs for last 20 errors from yesterday"
 echo "============================================================="
 sudo grep -Ei 'warning|error|critical|killed' ${HTTP_log} | grep -E "$(date --date='1 day ago' +"%b %d")|$(date --date='1 day ago' "+%Y-%m-%d")"| grep -viE 'mod_security|ModSecurity|File does not exist|whm-server-status' | tail -20
 echo "============================================================="
+MySQL_error_log=$(sudo grep -Er '^log_error|^log-error' /etc | grep -v php | sed -e 's|log-error.*/|/var|g' -e 's|log_error.*/var|/var|g' -e 's/"//g'|cut -d: -f2);
+
+if [ -z "$MySQL_error_log" ]
+then
+      echo "Unable to autodetect MySQL error log path"
+else
+      	echo "============================================================="
+	echo ""
+	echo "Check MySQL/MariaDB error logs for last 20 errors for today"
+	echo "============================================================="
+	sudo grep "$(date +%F)" ${MySQL_error_log} | tail -20;
+	echo "============================================================="
+	echo "============================================================="
+	echo ""
+	echo "Check MySQL/MariaDB error logs for last 20 errors for today"
+	echo "============================================================="
+	sudo grep "$(date --date='1 day ago' +%F)" ${MySQL_error_log} | tail -20;
+	echo "============================================================="
+fi
+
 echo "Network Checks"
 echo ""
 #echo "See connections by IP"
