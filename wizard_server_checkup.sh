@@ -348,7 +348,7 @@ echo ""
 if [ "${ControlPanel}" == "cpanel" ]; then
 	echo "Check cPhulkd Status. Should be disabled and is sometimes enabled with CSF and causes issues."
 	whmapi1 cphulk_status; ps aux | grep -i cphulk
-
+	echo "";
 	#Apache Log locations cPanel
 	##This directory contains the log data for the user's account, which exists on a webserver that runs EasyApache 3.
 	DomLogsEA3="/home/domlogs/"
@@ -376,7 +376,7 @@ echo "============================================================="
 echo ""
 echo "Check for /var/log/messages for last 20 error,critical, and kill errors"
 echo "============================================================="
-sudo grep -Ei 'oom|kill|mysql|Out of memory|critical|error' /var/log/messages | grep -viE 'Firewall|ftp' | tail -n 20
+sudo grep -Ei 'oom|kill|mysql|Out of memory|critical|error' /var/log/messages | grep -viE 'Firewall|ftp|00:00.*[atop,lfd]' | tail -n 20
 echo "============================================================="
 echo ""
 echo "Check ${HTTP_log_restart} for last 20"
