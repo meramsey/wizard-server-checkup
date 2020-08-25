@@ -403,7 +403,7 @@ echo "Check HTTP error logs for last 20 errors from yesterday"
 echo "============================================================="
 sudo grep -Ei 'warning|error|critical|killed' ${HTTP_log} | grep -E "$(date --date='1 day ago' +"%b %d")|$(date --date='1 day ago' "+%Y-%m-%d")"| grep -viE 'mod_security|ModSecurity|File does not exist|whm-server-status' | tail -20
 echo "============================================================="
-MySQL_error_log=$(sudo grep -Er '^log_error|^log-error' /etc | grep -v php | sed -e 's|log-error.*/|/var|g' -e 's|log_error.*/var|/var|g' -e 's/"//g'|cut -d: -f2);
+MySQL_error_log=$(sudo grep -Er '^log_error|^log-error' /etc | grep -v php | sed -e 's|log-error.*/var|/var|g' -e 's|log_error.*/var|/var|g' -e 's/"//g'|cut -d: -f2);
 
 if [ -z "$MySQL_error_log" ]
 then
