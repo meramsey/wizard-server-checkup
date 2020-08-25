@@ -413,13 +413,13 @@ else
 	echo ""
 	echo "Check MySQL/MariaDB error logs for last 20 errors for today"
 	echo "============================================================="
-	sudo grep "$(date +%F)" ${MySQL_error_log}|grep -Ev "resolve" | tail -20;
+	sudo grep "$(date +%F)" ${MySQL_error_log}|grep -Ev "resolve|Note" | tail -20;
 	echo "============================================================="
 	echo "============================================================="
 	echo ""
 	echo "Check MySQL/MariaDB error logs for last 20 errors for today"
 	echo "============================================================="
-	sudo grep "$(date --date='1 day ago' +%F)" ${MySQL_error_log}|grep -Ev "resolve" | tail -20;
+	sudo grep "$(date --date='1 day ago' +%F)" ${MySQL_error_log}|grep -Ev "resolve|Note" | tail -20;
 	echo "============================================================="
 fi
 
