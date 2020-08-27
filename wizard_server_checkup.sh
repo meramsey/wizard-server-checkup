@@ -121,11 +121,11 @@ else
 fi
 
 if [ -f /var/log/messages ]; then
-	$General_log="/var/log/messages"
+	General_log="/var/log/messages"
 elif [ -f /var/log/syslog ]; then
-	$General_log="/var/log/syslog"
+	General_log="/var/log/syslog"
 elif [ -f /var/log/rsyslog ]; then
-	$General_log="/var/log/rsyslog"
+	General_log="/var/log/rsyslog"
 else
 	echo "Could not find General log"
 fi
