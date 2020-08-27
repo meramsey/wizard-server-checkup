@@ -294,58 +294,75 @@ if [ $InitSystem == "systemd" ]; then
   echo "Service check for Apache/Litespeed:"
   systemctl status httpd
   echo ""
+  echo "============================================="
   echo "Service check for MySQL/MariaDB:"
   systemctl status mysql
   echo ""
+  echo "============================================="
   echo "Service check for PowerDNS|Named:"
   systemctl status pdns|| systemctl status named
   echo ""
+  echo "============================================="
   echo "Service check for Exim|Postfix:"
   systemctl status exim && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||systemctl status postfix && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
+  echo "============================================="
   echo "Service check for Dovecot:"
   systemctl status dovecot
   echo ""
+  echo "============================================="
   echo "Service check for Memcached:"
   systemctl status memcached
-
+  echo ""
+  echo "============================================="
 elif [ $InitSystem == "sysv-init" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
   service httpd status
   echo ""
+  echo "============================================="
   echo "Service check for MySQL/MariaDB:"
   service mysql status
   echo ""
+  echo "============================================="
   echo "Service check for PowerDNS|Named:"
   service pdns status|| service named status
   echo ""
+  echo "============================================="
   echo "Service check for Exim|Postfix:"
   service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
+  echo "============================================="
   echo "Service check for Dovecot:"
   service dovecot status
   echo ""
+  echo "============================================="
   echo "Service check for Memcached:"
   service memcached status
-
+  echo ""
+  echo "============================================="
 elif [ $InitSystem == "Upstart" ]; then
   echo "Checking important Services....:"
   echo "Service check for Apache/Litespeed:"
   service httpd status
   echo ""
+  echo "============================================="
   echo "Service check for MySQL/MariaDB:"
   service mysql status
   echo ""
+  echo "============================================="
   echo "Service check for PowerDNS|Named:"
   service pdns status|| service named status
   echo ""
+  echo "============================================="
   echo "Service check for Exim|Postfix:"
   service exim status  && echo -e "\e[31mExim email queue: $EximQueueNumber\e[0m"||service postfix status && echo -e "\e[31mPostfix email queue: $(postqueue -p)\e[0m"
   echo ""
+  echo "============================================="
   echo "Service check for Dovecot:"
   service dovecot status
   echo ""
+  echo "============================================="
   echo "Service check for Memcached:"
   service memcached status
 else
@@ -358,7 +375,8 @@ echo ""
 if [ "${ControlPanel}" == "cpanel" ]; then
 	echo "Check cPhulkd Status. Should be disabled and is sometimes enabled with CSF and causes issues."
 	whmapi1 cphulk_status; ps aux | grep -i cphulk
-	echo "";
+	echo ""
+  	echo "=============================================";
 	#Apache Log locations cPanel
 	##This directory contains the log data for the user's account, which exists on a webserver that runs EasyApache 3.
 	DomLogsEA3="/home/domlogs/"
@@ -456,10 +474,10 @@ echo "Yesterdays sar memory usage top 5 occurrences: ${PreviousDay1}"
 sar -r -f /var/log/sa/sa$(date +%d -d yesterday) | sort -rnk4 | head -n5|awk -v OFS='\t' 'BEGIN { printf "%s\t%s\t%s\t%s\n", "Time", "", "memused", "commit" } {print $1" " $2"     " $5"    "$9}'
 echo "============================================================="
 echo "Todays sar server load top 5 occurrences: ${CURRENTDATE}"
-sar -q | sort -rnk4 | head -n5|awk -v OFS='\t' 'BEGIN { printf "%s\t%s\t%s\t%s\n", "Time", "ldavg-1", "ldavg-5", "ldavg-15" } {print $1" " $2"     " $5"    "$6"    "$7}'
+sar -q | sort -rnk4 | head -n5|awk -v OFS='\t' 'BEGIN { printf "%s\t%s\t%s\t%s\n", "Time", "", "ldavg-1", "ldavg-5", "ldavg-15" } {print $1" " $2"     " $5"    "$6"    "$7}'
 echo "============================================================="
 echo "Yesterdays sar server load top 5 occurrences: ${PreviousDay1}"
-sar -q -f /var/log/sa/sa$(date +%d -d yesterday) | sort -rnk4 | head -n5|awk -v OFS='\t' 'BEGIN { printf "%s\t%s\t%s\t%s\n", "Time", "ldavg-1", "ldavg-5", "ldavg-15" } {print $1" " $2"     " $5"    "$6"    "$7}'
+sar -q -f /var/log/sa/sa$(date +%d -d yesterday) | sort -rnk4 | head -n5|awk -v OFS='\t' 'BEGIN { printf "%s\t%s\t%s\t%s\n", "Time", "", "ldavg-1", "ldavg-5", "ldavg-15" } {print $1" " $2"     " $5"    "$6"    "$7}'
 echo "============================================================="
 echo "";
 echo "Show top hits from Atop"
@@ -572,13 +590,13 @@ if [ "${FullDomlogPathToggle}" == 'f' -o "${FullDomlogPathToggle}" == 'y' ] ;the
 
 
 else
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep POST | awk '{print $1}' | cut -d: -f1|sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"| sort | uniq -c | sort -rn | head
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep POST | awk '{print $1}' | cut -d: -f1|sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" | sort | uniq -c | sort -rn | head
 	echo ""
 	echo "HTTP Dom Logs GET Requests for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep GET | awk '{print $1}' | cut -d: -f1 |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"| sort | uniq -c | sort -rn | head
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep GET | awk '{print $1}' | cut -d: -f1 |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" | sort | uniq -c | sort -rn | head
 	echo ""
 	echo "HTTP Dom Logs Top 10 bot/crawler requests per domain name for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -Ei 'crawl|bot|spider|yahoo|bing|google'| awk '{print $1}' | cut -d: -f1|sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"| sort | uniq -c | sort -rn | head
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -Ei 'crawl|bot|spider|yahoo|bing|google'| awk '{print $1}' | cut -d: -f1|sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" | sort | uniq -c | sort -rn | head
 	echo ""
 	echo "HTTP Dom Logs top ten IPs for ${DATE}"
 
@@ -586,13 +604,13 @@ else
 
 	echo ""
 	echo "Checking the IPs that Have Hit the Server Most and What Site they were hitting:"
-	sudo grep -rs "$DATE" ${CurrentDomlogsPath} | awk {'print $1'} |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed:| |g"| sort | uniq -c | sort -n | tail -10| sort -rn| column -t
+	sudo grep -rs "$DATE" ${CurrentDomlogsPath} | awk {'print $1'} |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed:| |g"| sort | uniq -c | sort -n | tail -10| sort -rn| column -t
 	echo ""
 	echo "Checking the Top Hits Per Site Per IP:"
-	sudo grep -rs "$DATE" ${CurrentDomlogsPath} | awk {'print $1,$6,$7'} |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed:| |g"| sort | uniq -c | sort -n | tail -10| sort -rn| column -t
+	sudo grep -rs "$DATE" ${CurrentDomlogsPath} | awk {'print $1,$6,$7'} |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed:| |g"| sort | uniq -c | sort -n | tail -10| sort -rn| column -t
 	echo ""
 	echo "HTTP Dom Logs find the top number of uri's being requested for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep POST | awk '{print $7}' | cut -d: -f2 |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" | sort | uniq -c | sort -rn | head| column -t
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep POST | awk '{print $7}' | cut -d: -f2 |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' | sort | uniq -c | sort -rn | head| column -t
 	echo ""
 	echo "";
 	echo "View HTTP requests per hour";
@@ -602,35 +620,35 @@ else
 	echo ""
 	echo "Wordpress Checks"
 	echo "Wordpress Login Bruteforcing checks for wp-login.php for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep wp-login.php | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep wp-login.php | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Wordpress Cron wp-cron.php(virtual cron) checks for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep wp-cron.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep wp-cron.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Wordpress XMLRPC Attacks checks for xmlrpc.php for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep xmlrpc.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep xmlrpc.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Wordpress Heartbeat API checks for admin-ajax.php for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep admin-ajax.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'} | sort | uniq -c | sort -n|tail| sort -rn;
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep admin-ajax.php| cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'} | sort | uniq -c | sort -n|tail| sort -rn;
 	echo ""
 	echo "CMS Bruteforce Checks"
 	echo "Drupal Login Bruteforcing checks for user/login/ for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "user/login/" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "user/login/" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Magento Login Bruteforcing checks for admin pages /admin_xxxxx/admin/index/index for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "admin_[a-zA-Z0-9_]*[/admin/index/index]" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "admin_[a-zA-Z0-9_]*[/admin/index/index]" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Joomla Login Bruteforcing checks for admin pages /administrator/index.php for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/administrator/index.php" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/administrator/index.php" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "vBulletin Login Bruteforcing checks for admin pages admincp for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "admincp" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "admincp" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Opencart Login Bruteforcing checks for admin pages /admin/index.php for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/admin/index.php" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/admin/index.php" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 	echo "Prestashop Login Bruteforcing checks for admin pages /adminxxxx for ${DATE}"
-	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/admin[a-zA-Z0-9_]*$" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e 's|"||g' -e "s|$acesslog_sed||g" -e "s|$Username/||g"|awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
+	sudo grep -r "$DATE" ${CurrentDomlogsPath} | grep -E "/admin[a-zA-Z0-9_]*$" | cut -f 1 -d ":" |sed -e "s|$CurrentDomlogsPath||g" -e "s|/home/.*/logs/||g" -e "s|^.*/||g" -e 's|"||g' -e "s|$acesslog_sed||g" |awk {'print $1,$6,$7'}  | sort | uniq -c | sort -n|tail| sort -rn
 	echo ""
 
 
